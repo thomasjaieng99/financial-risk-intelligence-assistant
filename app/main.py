@@ -15,6 +15,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 
 from app import db
+from app.agent import run_agent
 from app.config import ANTHROPIC_API_KEY, ANTHROPIC_MODEL
 
 app = FastAPI(title="Financial Risk Intelligence Assistant")
@@ -93,3 +94,13 @@ def ask(req: Query):
     answer = "".join(block.text for block in message.content if block.type == "text")
 
     return {"query": req.query, "answer": answer, "sources": hits}
+
+
+@app.post("/agent")
+def agent(req: Query):
+    """The Phase-2 agentic path (LangGraph): decompose the question into
+    sub-questions, retrieve for each and merge, then synthesize one cited answer
+    that flags conflicts between sources. Contrast with /ask, which is the
+    single-shot version. Without ANTHROPIC_API_KEY it returns the sub-questions
+    (just the original) and the retrieved sources, with a note."""
+    return run_agent(req.query, ticker=req.ticker, k=req.k)

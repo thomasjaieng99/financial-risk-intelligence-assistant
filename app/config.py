@@ -63,3 +63,11 @@ ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 # The model that synthesizes answers in /ask. Opus is the strong default;
 # override in .env with a cheaper/faster model (e.g. claude-haiku-4-5) if wanted.
 ANTHROPIC_MODEL = os.environ.get("ANTHROPIC_MODEL", "claude-opus-4-8")
+
+# --- Reranker (Phase 2) ---
+# Two-stage retrieval: the bi-encoder search returns RERANK_CANDIDATES cheap
+# candidates, then this cross-encoder re-scores only those and keeps the best.
+# A small MiniLM cross-encoder is fast (runs in ms on CPU) and a recognizable,
+# defensible default; swap in BAAI/bge-reranker-base for the same-family story.
+RERANK_MODEL = os.environ.get("RERANK_MODEL", "cross-encoder/ms-marco-MiniLM-L-6-v2")
+RERANK_CANDIDATES = int(os.environ.get("RERANK_CANDIDATES", "20"))

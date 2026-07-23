@@ -13,9 +13,10 @@ __pycache__/
 # Claude Code local machine settings
 .claude/settings.local.json
 
-# Private project meta + interview prep — kept LOCAL, never in the public repo
-CLAUDE.md
-INTERVIEW_PREP.md
-
 # macOS
 .DS_Store
+
+# Private project meta + interview prep + course tracker — LOCAL only, never pushed
+CLAUDE.md
+INTERVIEW_PREP.md
+PREP_PROGRESS.md

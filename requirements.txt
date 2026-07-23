@@ -41,3 +41,11 @@ beautifulsoup4
 # to synthesize a cited answer. Only /ask needs it — /search and ingest work
 # without a key. There's no standard-library way to call the Claude API.
 anthropic
+
+# --- Phase 2: agentic layer (agent.py) ---
+# LangGraph models the decompose -> retrieve -> synthesize workflow as an
+# explicit state graph, so the pipeline can grow branches/loops/parallelism
+# without rewriting the steps. Builds on langchain-core (already present via
+# langchain-text-splitters). The reranker (rerank.py) needs NO new dependency —
+# it reuses sentence-transformers' CrossEncoder.
+langgraph
