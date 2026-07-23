@@ -1,0 +1,43 @@
+# --- API layer (per CLAUDE.md stack table) ---
+fastapi
+uvicorn
+
+# --- Orchestration ---
+# Only the text-splitter subpackage, not the full `langchain` package. We need
+# RecursiveCharacterTextSplitter-style logic, not agents/chains/retrievers/the
+# hundreds of third-party integrations that come with the full framework.
+langchain-text-splitters
+
+# --- Embeddings: BAAI/bge-small-en-v1.5, local, 384-dim ---
+# sentence-transformers is the wrapper that loads the model and produces
+# embeddings; torch is its required tensor backend. No stdlib equivalent.
+sentence-transformers
+torch
+
+# --- Vector store client (psycopg 3, raw SQL, no ORM) ---
+# psycopg[binary]: precompiled wheel so we don't need libpq dev headers
+# installed locally just to get a working Postgres driver.
+# pgvector: NOT an ORM and does not write queries. It only teaches psycopg how
+# to serialize/deserialize the Postgres `vector` type to/from a Python list —
+# without it we'd hand-write string formatting for every vector literal.
+psycopg[binary]
+pgvector
+
+# --- Config ---
+# python-dotenv: os.environ can't parse a .env file on its own; this is the
+# minimal, standard way to load key=value pairs from .env into the process.
+python-dotenv
+
+# --- HTML parsing (chunk.py) ---
+# stdlib html.parser CAN strip tags (we used it for the diagnostic test), but
+# it can't easily distinguish "hidden XBRL metadata" from "real filing text,"
+# and navigating nested tables to reconstruct heading structure gets ugly
+# fast. BeautifulSoup makes that code readable. Using its default html.parser
+# backend so we don't also need lxml unless parsing speed becomes a problem.
+beautifulsoup4
+
+# --- /ask synthesis (main.py, optional) ---
+# Official Anthropic SDK. The /ask endpoint sends the retrieved chunks to Claude
+# to synthesize a cited answer. Only /ask needs it — /search and ingest work
+# without a key. There's no standard-library way to call the Claude API.
+anthropic

@@ -1,0 +1,32 @@
+# Postgres 16 + pgvector, for local development only.
+#
+# Host port is 5433 (not 5432) so it can't collide with any Postgres already
+# installed on the machine. DB name / user / password come from .env, so the
+# container and the app (config.py) read from the SAME source and can never
+# drift apart. The :- defaults just keep this file runnable if a var is missing.
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: finrisk_db
+    environment:
+      POSTGRES_DB: ${DB_NAME:-finrisk}
+      POSTGRES_USER: ${DB_USER:-finrisk}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-finrisk_dev_password}
+    ports:
+      - "${DB_PORT:-5433}:5432"   # host 5433 -> container's internal 5432
+    volumes:
+      # Named volume persists the data across container restarts.
+      - finrisk_pgdata:/var/lib/postgresql/data
+      # init.sql runs ONCE, only when this volume is first created. If you change
+      # the schema or EMBED_DIM, run `docker compose down -v` to drop the volume
+      # so it re-runs — Postgres will NOT re-run it on an existing volume.
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      # Lets `up --wait` block until Postgres actually accepts connections.
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-finrisk} -d ${DB_NAME:-finrisk}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  finrisk_pgdata:

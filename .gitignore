@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+
+# Local secrets, config, and downloaded data — NEVER commit these.
+# .env holds a real name/email and the DB password; .cache holds downloaded
+# EDGAR data. .env.example (with placeholders) IS committed as the template.
+.env
+.cache/
+
+# Claude Code local machine settings
+.claude/settings.local.json
+
+# Private project meta + interview prep — kept LOCAL, never in the public repo
+CLAUDE.md
+INTERVIEW_PREP.md
+
+# macOS
+.DS_Store
